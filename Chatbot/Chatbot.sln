@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreBot", "Presentation\CoreBot\CoreBot\CoreBot.csproj", "{3A48D507-16BE-46E9-8B56-56A162032536}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{1F3F507A-B29F-483D-9E47-BECA78EFFFA5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infraestructure", "Infraestructure", "{BAEE6854-E74A-4A5E-A5A9-DC06F54394F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Proxy", "Proxy", "{25A101FA-BA7D-4003-B217-5672B3B05C0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzFunctionClient", "Infraestructure\Proxy\AzFunctionClient\AzFunctionClient.csproj", "{C2862F2B-6AE2-4C4E-A186-63B522AF30C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A48D507-16BE-46E9-8B56-56A162032536}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A48D507-16BE-46E9-8B56-56A162032536}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A48D507-16BE-46E9-8B56-56A162032536}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A48D507-16BE-46E9-8B56-56A162032536}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2862F2B-6AE2-4C4E-A186-63B522AF30C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2862F2B-6AE2-4C4E-A186-63B522AF30C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2862F2B-6AE2-4C4E-A186-63B522AF30C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2862F2B-6AE2-4C4E-A186-63B522AF30C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3A48D507-16BE-46E9-8B56-56A162032536} = {1F3F507A-B29F-483D-9E47-BECA78EFFFA5}
+		{25A101FA-BA7D-4003-B217-5672B3B05C0C} = {BAEE6854-E74A-4A5E-A5A9-DC06F54394F9}
+		{C2862F2B-6AE2-4C4E-A186-63B522AF30C0} = {25A101FA-BA7D-4003-B217-5672B3B05C0C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B603DE66-FB22-46D0-A11B-48593DC8062B}
+	EndGlobalSection
+EndGlobal
