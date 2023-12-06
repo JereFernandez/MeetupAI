@@ -6,7 +6,6 @@
 using AzFunctionClient.InterfaceService;
 using AzFunctionClient.Service;
 using CoreBot.Bots;
-using CoreBot.Dialogs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
@@ -42,32 +41,19 @@ namespace CoreBot
             // Create the User state. (Used in this bot's Dialog implementation.)
             services.AddSingleton<UserState>();
 
+            services.AddSingleton<IBot, MainDialog>();
             // Create the Conversation state. (Used by the Dialog system itself.)
             services.AddSingleton<ConversationState>();
 
-            // Register LUIS recognizer
-            services.AddSingleton<FlightBookingRecognizer>();
-
-            // Register the BookingDialog.
-            services.AddSingleton<BookingDialog>();
-
-            // The MainDialog that will be run by the bot.
-            services.AddSingleton<MainDialog>();
-
-            // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
             services.AddTransient<IAzFunctionClient, AzFunctionClientService>();
 
             services.AddHttpClient(nameof(AzFunctionClientService),
                 client =>
                 {
-                    // Set the base address of the typed client.
                     client.BaseAddress = new Uri(_configuration.GetValue<string>("AzFunctionUri"));
-
-                    // Add a user-agent default request header.
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd("dotnet-docs");
+                    client.DefaultRequestHeaders.Add("x-functions-key", _configuration.GetValue<string>("AzFunctAuthentication"));
                 });
-                    }
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -87,7 +73,6 @@ namespace CoreBot
                     endpoints.MapControllers();
                 });
 
-            // app.UseHttpsRedirection();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using AzFunctionClient.InterfaceService;
+﻿using AzFunctionClient.DTO.Request;
+using AzFunctionClient.InterfaceService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace AzFunctionClient.Service
@@ -23,17 +25,22 @@ namespace AzFunctionClient.Service
 
         private HttpClient CreateConnection() => _httpClientFactory.CreateClient(nameof(AzFunctionClientService));
 
-        public async Task<string> SendMessageToLLM(string text)
+        public async Task<string> SendMessageToOrchestrator(string inputText)
         {
             _logger.LogInformation("Before request to Azure Function");
-        
+
             HttpClient client = CreateConnection();
 
-            var response = await client.PostAsJsonAsync(_configuration.GetValue<string>("AzFunctionEndpoint"), new
-            {
-                inputText = text
-            });
+            using StringContent json = new(JsonSerializer.Serialize
+                (new
+                    {
+                        question = inputText
+                    }
+                )
+                , Encoding.UTF8
+                , "application/json");
 
+            var response = await client.PostAsync(_configuration.GetValue<string>("AzFunctionEndpoint"), json);
             response.EnsureSuccessStatusCode();
 
             _logger.LogInformation("Azure Function successfull responsed");

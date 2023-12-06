@@ -120,10 +120,9 @@ def queryProcessing(question):
     
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
-@app.route(route="OrchestratorFunction")
+@app.route(route="OrchestratorFunction", methods=['POST'])
 def OrchestratorFunction(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
-    logging.info(pyodbc.drivers())
 
     req_body = req.get_json()
     question = req_body.get('question')
