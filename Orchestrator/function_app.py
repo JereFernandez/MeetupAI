@@ -15,14 +15,14 @@ import pyodbc
 
 os.environ["OPENAI_API_TYPE"]="azure"
 os.environ["OPENAI_API_VERSION"]="2023-07-01-preview"
-os.environ["OPENAI_API_BASE"]="https://alg-meetup-openai.openai.azure.com"
-os.environ["OPENAI_API_KEY"]="c8d74b8444be4f45b93a65193c3dbbd0"
-os.environ["OPENAI_CHAT_MODEL"]="alg-meetup-openai"
+os.environ["OPENAI_API_BASE"]=""
+os.environ["OPENAI_API_KEY"]=""
+os.environ["OPENAI_CHAT_MODEL"]=""
 
-os.environ["SQL_SERVER"]="alg-meetup.database.windows.net"
-os.environ["SQL_DB"]="alg-meetup-database"
-os.environ["SQL_USERNAME"]="aimeetup" 
-os.environ["SQL_PWD"]="28S&3^%4@t57"
+os.environ["SQL_SERVER"]=""
+os.environ["SQL_DB"]=""
+os.environ["SQL_USERNAME"]="" 
+os.environ["SQL_PWD"]=""
 
 
 def CreateSqlEngine():
@@ -45,7 +45,7 @@ def CreateSqlEngine():
 def InitializeOpenAI():
     llm = AzureChatOpenAI(model=os.getenv("OPENAI_CHAT_MODEL"),
                       deployment_name=os.getenv("OPENAI_CHAT_MODEL"),
-                      temperature=0, max_tokens=5000)
+                      temperature=0, max_tokens=4000)
     
     return llm
 
@@ -59,9 +59,10 @@ def systemPrompt():
             #Reglas de seguridad:
                 - No generes consultas para insertar o modificar datos.
 
-            #Reglas para respuestas en lenguaje natural:
-                - Formatea los números en las respuesta con la región es-AR.
-                - Responde siempre en español.
+            #Reglas para respuestas:
+                - Formatea los números con la región es-AR.
+                - Formatea los precios con la región es-AR.
+                - Siempre genera la respuesta en español.   
 
             #Utiliza el siguiente esquema de base de datos perteneciente al área de ventas:
             
@@ -86,7 +87,7 @@ def systemPrompt():
                 - No generes comentarios adicionales, producirán error en la consulta SQL.
                 - Si te dan una Region en español traducila a inglés.
                 - Si te dan un Country (País) en español traducilo a inglés.
-                - Si te dan un Item Type (Tipo de producto) en español traducilo a inglés.
+                - Si te dan un Item Type (Tipo de producto) en español traducilo a inglés. 
             
             """
             ),
@@ -97,7 +98,7 @@ def systemPrompt():
     return final_prompt
 
 def _handle_error(error) -> str:
-    return str(error)[:50]
+    return str(error)[216:]
 
 def queryProcessing(question):
     db_engine = CreateSqlEngine()
@@ -111,12 +112,18 @@ def queryProcessing(question):
         toolkit=sql_toolkit,
         agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
         verbose=True,
-        handle_parsing_errors=_handle_error,
     )
-    prompt = systemPrompt()
-    return sqldb_agent.run(prompt.format(
+
+    try: 
+        prompt = systemPrompt()
+        return sqldb_agent.run(prompt.format(
             question=question
-    ))  
+        ))  
+    except ValueError as ex:
+        return _handle_error(str(ex))
+        
+
+   
     
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
