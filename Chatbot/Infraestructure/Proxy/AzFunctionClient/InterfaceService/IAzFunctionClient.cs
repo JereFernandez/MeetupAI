@@ -8,6 +8,6 @@ namespace AzFunctionClient.InterfaceService
 {
     public interface IAzFunctionClient
     {
-        Task<string> SendMessageToLLM(string text);
+        Task<string> SendMessageToOrchestrator(string inputText);
     }
 }
