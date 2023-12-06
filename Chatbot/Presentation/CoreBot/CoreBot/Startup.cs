@@ -3,20 +3,27 @@
 //
 // Generated with Bot Builder V4 SDK Template for Visual Studio CoreBot v4.18.1
 
+using AzFunctionClient.InterfaceService;
+using AzFunctionClient.Service;
 using CoreBot.Bots;
-using CoreBot.Dialogs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace CoreBot
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration) => (_configuration) = configuration;
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -34,20 +41,18 @@ namespace CoreBot
             // Create the User state. (Used in this bot's Dialog implementation.)
             services.AddSingleton<UserState>();
 
+            services.AddSingleton<IBot, MainDialog>();
             // Create the Conversation state. (Used by the Dialog system itself.)
             services.AddSingleton<ConversationState>();
 
-            // Register LUIS recognizer
-            services.AddSingleton<FlightBookingRecognizer>();
+            services.AddTransient<IAzFunctionClient, AzFunctionClientService>();
 
-            // Register the BookingDialog.
-            services.AddSingleton<BookingDialog>();
-
-            // The MainDialog that will be run by the bot.
-            services.AddSingleton<MainDialog>();
-
-            // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
+            services.AddHttpClient(nameof(AzFunctionClientService),
+                client =>
+                {
+                    client.BaseAddress = new Uri(_configuration.GetValue<string>("AzFunctionUri"));
+                    client.DefaultRequestHeaders.Add("x-functions-key", _configuration.GetValue<string>("AzFunctAuthentication"));
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,7 +73,6 @@ namespace CoreBot
                     endpoints.MapControllers();
                 });
 
-            // app.UseHttpsRedirection();
         }
     }
 }
