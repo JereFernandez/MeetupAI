@@ -31,6 +31,8 @@ namespace AzFunctionClient.Service
 
             HttpClient client = CreateConnection();
 
+            // creamos la petición con StringContent, ya que, JsonContent no lo recibe Python.
+            // desde postman le podemos pegar al Azure Function con raw JSON.
             using StringContent json = new(JsonSerializer.Serialize
                 (new
                     {
