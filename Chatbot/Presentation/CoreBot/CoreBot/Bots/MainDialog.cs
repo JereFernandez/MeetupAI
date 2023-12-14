@@ -33,10 +33,9 @@ namespace CoreBot.Bots
         {
             foreach (var member in membersAdded)
             {
-                // Greet anyone that was not the target (recipient) of this message.
-                // To learn more about Adaptive Cards, see https://aka.ms/msbot-adaptivecards for more details.
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {
+                    //mensaje inicial que se envía al registrar un nuevo miembro en el canal, o sea para cada usuario nuevo.
                     var welcome = MessageFactory.Text("Bienvenido a la meetup! Soy un Chatbot utilizando LangChain para orquestar con OpenAI y SQL.");
                     await turnContext.SendActivityAsync(welcome, cancellationToken);
                 }
@@ -49,8 +48,11 @@ namespace CoreBot.Bots
 
             if (turnContext != null && turnContext.Activity != null)
             {
+                //simulamos los puntitos de estar escribiendo
                 await turnContext.SendActivityAsync(new Activity() { Type = ActivityTypes.Typing }, cancellationToken);
+                //enviamos el mensaje al orquestador desarrollo en python y alojado en Azure Function
                 string answer = await _azFunctionClient.SendMessageToOrchestrator(turnContext.Activity.Text);
+                //enviamos la respuesta al usuario
                 await turnContext.SendActivityAsync(MessageFactory.Text(answer), cancellationToken);
             }
 

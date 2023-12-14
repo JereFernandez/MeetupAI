@@ -46,7 +46,8 @@ namespace CoreBot
             services.AddSingleton<ConversationState>();
 
             services.AddTransient<IAzFunctionClient, AzFunctionClientService>();
-
+            
+            //Inicializamos HttpClient por nombre para que IHttpFactory lo adminsitre. 
             services.AddHttpClient(nameof(AzFunctionClientService),
                 client =>
                 {
